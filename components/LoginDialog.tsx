@@ -1,3 +1,4 @@
+import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Stack, Typography, Link, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import * as yup from 'yup';
@@ -40,12 +41,36 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
   const [errors, setErrors] = useState<{email?: string; password?: string; name?: string}>({});
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const { setUser } = useAuth();
+  
 
   const handleSubmit = async () => {
     try {
       if (isLogin) {
         await loginValidationSchema.validate({ email, password }, { abortEarly: false });
         // todo: api to login
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+  
+        const data = await response.json();
+  
+        if (!response.ok) {
+          setToastMessage(data.message);
+          setOpenToast(true);
+          return;
+        }
+        onClose();
+        setToastMessage('Login successful');
+        setOpenToast(true);
+        setUser(data.user);
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2);
       } else {
         await signupValidationSchema.validate({ email, password, name }, { abortEarly: false });
         const response = await fetch('/api/register', {

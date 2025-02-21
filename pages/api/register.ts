@@ -63,7 +63,7 @@ export default async function handler(
     })
 
     // Set cookie
-    res.setHeader('Set-Cookie', `token=${token}; Path=/; HttpOnly; SameSite=Strict`)
+    res.setHeader('Set-Cookie', `token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`);
 
     return res.status(201).json({
       message: 'Registration successful',

@@ -1,9 +1,13 @@
 import { AppBar, Toolbar, Typography, Avatar, IconButton } from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import { useLoginDialog } from '../contexts/LoginDialogContext'
+import { useAuth } from '../contexts/AuthContext';
 
-export default function Header({ user }: { user?: { name: string } }) {
+
+export default function Header() {
   const { openLoginDialog } = useLoginDialog()
+  const { user, isLoading } = useAuth();
+
 
   return (
     <AppBar position="static">
@@ -12,7 +16,7 @@ export default function Header({ user }: { user?: { name: string } }) {
           Cake Fans
         </Typography>
         
-        {user ? (
+        {!isLoading && user ? (
           <Avatar sx={{ bgcolor: 'secondary.main' }}>
             {user.name.charAt(0).toUpperCase()}
           </Avatar>

@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Stack, Typography, Link } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Stack, Typography, Link, Snackbar } from '@mui/material';
 import { useState } from 'react';
 import * as yup from 'yup';
 
@@ -38,6 +38,8 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [errors, setErrors] = useState<{email?: string; password?: string; name?: string}>({});
+  const [openToast, setOpenToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   const handleSubmit = async () => {
     try {
@@ -46,7 +48,25 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
         // todo: api to login
       } else {
         await signupValidationSchema.validate({ email, password, name }, { abortEarly: false });
-        // todo: api to signup
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email, password }),
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          onClose();
+          setToastMessage(JSON.stringify(data.errors));
+          setOpenToast(true);
+          return;
+        } else {
+          onClose();
+          setToastMessage(JSON.stringify(data.message));
+          setOpenToast(true);
+        }
       }
       onClose(); // callback
     } catch (err) {
@@ -70,51 +90,59 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{isLogin ? 'Login' : 'Sign Up'}</DialogTitle>
-      <DialogContent>
-        <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
-          {!isLogin && (
+    <>
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle>{isLogin ? 'Login' : 'Sign Up'}</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
+            {!isLogin && (
+              <TextField
+                label="Name"
+                fullWidth
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                error={!!errors.name}
+                helperText={errors.name}
+              />
+            )}
             <TextField
-              label="Name"
+              label="Email"
+              type="email"
               fullWidth
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              error={!!errors.name}
-              helperText={errors.name}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              error={!!errors.email}
+              helperText={errors.email}
             />
-          )}
-          <TextField
-            label="Email"
-            type="email"
-            fullWidth
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={!!errors.email}
-            helperText={errors.email}
-          />
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={!!errors.password}
-            helperText={errors.password}
-          />
-        </Stack>
-      </DialogContent>
-      <DialogActions sx={{ flexDirection: 'column', alignItems: 'center', pb: 2 }}>
-        <Button onClick={handleSubmit} variant="contained" sx={{ width: '200px' }}>
-          {isLogin ? 'Login' : 'Sign Up'}
-        </Button>
-        <Typography variant="body2" sx={{ mt: 2 }}>
-          {isLogin ? "Not registered yet? " : "Already have an account? "}
-          <Link component="button" onClick={toggleMode} underline="hover">
-            {isLogin ? "Sign up here" : "Login here"}
-          </Link>
-        </Typography>
-      </DialogActions>
-    </Dialog>
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={!!errors.password}
+              helperText={errors.password}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ flexDirection: 'column', alignItems: 'center', pb: 2 }}>
+          <Button onClick={handleSubmit} variant="contained" sx={{ width: '200px' }}>
+            {isLogin ? 'Login' : 'Sign Up'}
+          </Button>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            {isLogin ? "Not registered yet? " : "Already have an account? "}
+            <Link component="button" onClick={toggleMode} underline="hover">
+              {isLogin ? "Sign up here" : "Login here"}
+            </Link>
+          </Typography>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={openToast}
+        autoHideDuration={6000}
+        onClose={() => setOpenToast(false)}
+        message={toastMessage}
+      />
+    </>
   );
 }

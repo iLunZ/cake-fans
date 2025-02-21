@@ -4,6 +4,7 @@ import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { createTheme } from '@mui/material/styles'
 import Header from '../components/Header'
+import { LoginDialogProvider } from '../contexts/LoginDialogContext'
 
 const theme = createTheme({
   palette: {
@@ -19,9 +20,11 @@ const theme = createTheme({
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Header />
-      <Component {...pageProps} />
+      <LoginDialogProvider>
+        <CssBaseline />
+        <Header />
+        <Component {...pageProps} />
+      </LoginDialogProvider>
     </ThemeProvider>
   )
 }

@@ -1,23 +1,30 @@
-import { AppBar, Toolbar, Typography, Container } from '@mui/material'
-import { useRouter } from 'next/router'
+import { AppBar, Toolbar, Typography, Avatar, IconButton } from '@mui/material'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
+import { useLoginDialog } from '../contexts/LoginDialogContext'
 
-export default function Header() {
-  const router = useRouter()
+export default function Header({ user }: { user?: { name: string } }) {
+  const { openLoginDialog } = useLoginDialog()
 
   return (
     <AppBar position="static">
-      <Container maxWidth="lg">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, cursor: 'pointer' }}
-            onClick={() => router.push('/')}
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
+        <Typography variant="h6">
+          Cake Fans
+        </Typography>
+        
+        {user ? (
+          <Avatar sx={{ bgcolor: 'secondary.main' }}>
+            {user.name.charAt(0).toUpperCase()}
+          </Avatar>
+        ) : (
+          <IconButton 
+            color="inherit" 
+            onClick={openLoginDialog}
           >
-            Cake Fans
-          </Typography>
-        </Toolbar>
-      </Container>
+            <AccountCircleIcon />
+          </IconButton>
+        )}
+      </Toolbar>
     </AppBar>
   )
 }

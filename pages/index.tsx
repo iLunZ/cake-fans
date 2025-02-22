@@ -2,7 +2,9 @@ import { Container, Typography, Grid, Card, CardMedia, CardContent, Box, Paginat
 import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import AddIcon from '@mui/icons-material/Add';
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/router';
+import { useAuth } from '../contexts/AuthContext';
+
 
 
 type Cake = {
@@ -31,14 +33,6 @@ type QueryParams = {
   page: number
   limit: number
 }
-// const cakes = [
-//   { id: 1, name: 'Chocolate Cake', image: 'https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg' },
-//   { id: 2, name: 'Strawberry Cheesecake', image: 'https://images.pexels.com/photos/1126359/pexels-photo-1126359.jpeg' },
-//   { id: 3, name: 'Red Velvet', image: 'https://images.pexels.com/photos/1721932/pexels-photo-1721932.jpeg' },
-//   { id: 4, name: 'Carrot Cake', image: 'https://images.pexels.com/photos/1854652/pexels-photo-1854652.jpeg' },
-//   { id: 5, name: 'Black Forest', image: 'https://images.pexels.com/photos/2144112/pexels-photo-2144112.jpeg' },
-//   { id: 6, name: 'Vanilla Bean', image: 'https://images.pexels.com/photos/1702373/pexels-photo-1702373.jpeg' },
-// ];
 
 const cakeValidationSchema = yup.object({
   name: yup.string().required('Cake name is required'),
@@ -54,21 +48,22 @@ const cakeValidationSchema = yup.object({
 });
 
 export default function Home() {
-  const router = useRouter()
-  const [cakes, setCakes] = useState<Cake[]>([])
-  const [loading, setLoading] = useState(true)
-  const [metadata, setMetadata] = useState<CakesResponse['metadata']>()
+  const router = useRouter();
+  const { user } = useAuth();
+  const [cakes, setCakes] = useState<Cake[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [metadata, setMetadata] = useState<CakesResponse['metadata']>();
   const [query, setQuery] = useState<QueryParams>({
     page: 1,
     limit: 6
-  })
-  const [open, setOpen] = useState(false)
+  });
+  const [open, setOpen] = useState(false);
   const [cakeData, setCakeData] = useState({
     name: '',
     imageUrl: '',
     comment: '',
     yumFactor: 1
-  })
+  });
   const [errors, setErrors] = useState<{
     name?: string;
     imageUrl?: string;
@@ -82,24 +77,33 @@ export default function Home() {
     const queryString = new URLSearchParams({
       page: query.page.toString(),
       limit: query.limit.toString()
-    }).toString()
+    }).toString();
     const response = await fetch(`/api/cakes?${queryString}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-    })
-    const data: CakesResponse = await response.json()
-    setCakes(data.cakes)
-    setMetadata(data.metadata)
-    setLoading(false)
-  }
+    });
+    const data: CakesResponse = await response.json();
+    setCakes(data.cakes);
+    setMetadata(data.metadata);
+    setLoading(false);
+  };
   useEffect(() => {
-    fetchCakes()
-  }, [query])
+    fetchCakes();
+  }, [query]);
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    setQuery(prev => ({ ...prev, page }))
-  }
+    setQuery(prev => ({ ...prev, page }));
+  };
+
+  const handlePost = () => {
+    if(!user) {
+      setToastMessage('You must be logged in to post a cake');
+      setOpenToast(true);
+      return;
+    }
+    setOpen(true);
+  };
 
   const handleSubmit = async () => {
     try {
@@ -122,7 +126,7 @@ export default function Home() {
         setOpenToast(true);
         return;
       }
-      setOpen(false)
+      setOpen(false);
       setToastMessage('Cake added successfully');
       setOpenToast(true);
       setCakeData({
@@ -130,7 +134,7 @@ export default function Home() {
         imageUrl: '',
         comment: '',
         yumFactor: 1
-      })
+      });
       // Refresh cakes list
       await fetchCakes();
     } catch (err) {
@@ -148,7 +152,7 @@ export default function Home() {
       <Container>
         <Typography>Loading...</Typography>
       </Container>
-    )
+    );
   }
   return (
     <>
@@ -236,7 +240,7 @@ export default function Home() {
       <Fab 
         color="primary" 
         aria-label="add" 
-        onClick={() => setOpen(true)}
+        onClick={() => {handlePost();}}
         sx={{
           position: 'fixed',
           bottom: 24,

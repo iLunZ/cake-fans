@@ -45,8 +45,7 @@ export default async function handler(
       return res.status(401).json({ message: 'Invalid email or password' })
     }
 
-    // Set cookie with user's token
-    res.setHeader('Set-Cookie', `token=${user.token}; Path=/; HttpOnly; SameSite=Strict`)
+    res.setHeader('Set-Cookie', `token=${user.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`);
 
     return res.status(200).json({
       message: 'Login successful',

@@ -43,12 +43,15 @@ export default async function handler(
   
       // Get user ID from token/auth
       const token = req.cookies.token;
+      if (!token) {
+        return res.status(401).json({ message: 'Unauthorized, please login' });
+      }
       const user = await prisma.user.findFirst({
         where: { token }
       });
   
       if (!user) {
-        return res.status(401).json({ message: 'Unauthorized' });
+        return res.status(401).json({ message: 'Unauthorized, please login' });
       }
   
       const cake = await prisma.cake.create({

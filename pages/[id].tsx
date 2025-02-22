@@ -88,6 +88,10 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
       setOpen(false);
       setToastMessage('Comment added successfully');
       setOpenToast(true);
+      setCommentData({
+        comment: '',
+        yumFactor: 1
+      });
       setTimeout(() => {
         window.location.reload();
       }, 2000);

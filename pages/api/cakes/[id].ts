@@ -81,6 +81,7 @@ export default async function handler(
       })
   
       if (!cake) {
+        // return res.redirect(404, '/404')
         return res.status(404).json({ message: 'Cake not found' })
       }
   

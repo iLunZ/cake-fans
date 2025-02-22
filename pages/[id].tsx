@@ -52,7 +52,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true
     };
   }
-  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cakes/${id}`, {
+  const apiUrl = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_URL : `https://${process.env.VERCEL_URL}`;
+  const response = await fetch(`${apiUrl}/api/cakes/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -70,8 +71,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       cake
     }
   };
-};
-export default function CakeDetail({ cake }: { cake: Cake }) {
+};export default function CakeDetail({ cake }: { cake: Cake }) {
   const [open, setOpen] = useState(false);
   const [commentData, setCommentData] = useState({
     comment: '',

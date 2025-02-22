@@ -60,7 +60,7 @@ export default function Home() {
   const [metadata, setMetadata] = useState<CakesResponse['metadata']>()
   const [query, setQuery] = useState<QueryParams>({
     page: 1,
-    limit: 5
+    limit: 6
   })
   const [open, setOpen] = useState(false)
   const [cakeData, setCakeData] = useState({

@@ -2,6 +2,7 @@ import { Container, Typography, Grid, Card, CardMedia, CardContent, Box, Paginat
 import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import AddIcon from '@mui/icons-material/Add';
+import { useRouter } from 'next/router'
 
 
 type Cake = {
@@ -53,6 +54,7 @@ const cakeValidationSchema = yup.object({
 });
 
 export default function Home() {
+  const router = useRouter()
   const [cakes, setCakes] = useState<Cake[]>([])
   const [loading, setLoading] = useState(true)
   const [metadata, setMetadata] = useState<CakesResponse['metadata']>()
@@ -175,17 +177,20 @@ export default function Home() {
           <Grid container spacing={3}>
             {cakes.map((cake) => (
               <Grid item key={cake.id} xs={12} sm={6} md={4}>
-                <Card sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                  '&:hover, &:active': {
-                    transform: 'scale(1.03)',
-                    boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
-                    cursor: 'pointer'
-                  }
-                }}>
+                <Card 
+                  onClick={() => router.push(`/${cake.id}`)}
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                    '&:hover, &:active': {
+                      transform: 'scale(1.03)',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                      cursor: 'pointer'
+                    }
+                  }}
+                >
                   <CardMedia
                     component="img"
                     height="200"

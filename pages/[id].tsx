@@ -71,7 +71,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       cake
     }
   };
-};export default function CakeDetail({ cake }: { cake: Cake }) {
+};
+
+export default function CakeDetail({ cake }: { cake: Cake }) {
   const [open, setOpen] = useState(false);
   const [commentData, setCommentData] = useState({
     comment: '',

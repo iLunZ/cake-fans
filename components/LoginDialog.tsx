@@ -48,7 +48,6 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
     try {
       if (isLogin) {
         await loginValidationSchema.validate({ email, password }, { abortEarly: false });
-        // todo: api to login
         const response = await fetch('/api/login', {
           method: 'POST',
           headers: {
@@ -84,16 +83,16 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
 
         if (!response.ok) {
           onClose();
-          setToastMessage(JSON.stringify(data.errors));
+          setToastMessage(JSON.stringify(data.message));
           setOpenToast(true);
           return;
         } else {
           onClose();
           setToastMessage(JSON.stringify(data.message));
           setOpenToast(true);
+          setUser(data.user);
         }
       }
-      onClose();
     } catch (err) {
       console.log('==> handleSubmit Error:', err);
       if (err instanceof yup.ValidationError) {

@@ -1,11 +1,15 @@
 import { GetServerSideProps } from 'next'
-import { Container, Typography, Box, Card, CardMedia, Divider, Stack, Breadcrumbs, Link, Fab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar } from '@mui/material'
+import { Container, Typography, Box, Card, CardMedia, Divider, Stack, Breadcrumbs, Link, Fab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar, IconButton } from '@mui/material'
 
 import StarIcon from '@mui/icons-material/Star'
 import NavigateNextIcon from '@mui/icons-material/NavigateNext'
 import CommentIcon from '@mui/icons-material/Comment';
 import * as yup from 'yup';
 import { useState } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useAuth } from '../contexts/AuthContext';
+import { useRouter } from 'next/router';
+
 
 const commentValidationSchema = yup.object({
   comment: yup.string()
@@ -66,6 +70,26 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
   const [errors, setErrors] = useState<{comment?: string; yumFactor?: string}>({});
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const { user } = useAuth();
+  const router = useRouter();
+  const [openConfirm, setOpenConfirm] = useState(false);
+
+  const handleDelete = async () => {
+    const response = await fetch(`/api/cakes/${cake.id}`, {
+      method: 'DELETE',
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      setToastMessage('Cake deleted successfully');
+      setOpenToast(true);
+      router.push('/');
+    } else {
+      setToastMessage(data.message);
+      setOpenToast(true);
+    }
+  };
   const handleSubmit = async () => {
     try {
       await commentValidationSchema.validate(commentData, { abortEarly: false });
@@ -133,13 +157,29 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
           </Typography>
         </Breadcrumbs>
         <Card>
-          <CardMedia
-            component="img"
-            height="400"
-            image={cake.imageUrl}
-            alt={cake.name}
-            sx={{ objectFit: 'cover' }}
-          />
+          <Box sx={{ position: 'relative' }}>
+            <CardMedia
+              component="img"
+              height="400"
+              image={cake.imageUrl}
+              alt={cake.name}
+              sx={{ objectFit: 'cover' }}
+            />
+            {user && user.id === cake.user.id && (
+              <IconButton
+                sx={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 8,
+                  bgcolor: 'white',
+                  '&:hover': { bgcolor: 'grey.100' }
+                }}
+                onClick={() => setOpenConfirm(true)}
+              >
+                <DeleteIcon />
+              </IconButton>
+            )}
+          </Box>
           <Box sx={{ p: 3 }}>
             <Typography variant="h4" gutterBottom align="center">
               {cake.name}
@@ -244,6 +284,18 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
         onClose={() => setOpenToast(false)}
         message={toastMessage}
       />
+      <Dialog open={openConfirm} onClose={() => setOpenConfirm(false)}>
+        <DialogTitle>Delete Cake</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this cake? This action cannot be undone.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirm(false)}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   )
 }

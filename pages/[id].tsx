@@ -211,7 +211,6 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
                     {[...Array(comment.yumFactor)].map((_, index) => (
                       <StarIcon key={index} sx={{ color: '#FFD700', fontSize: 20 }} />
                     ))}
-                    {comment.yumFactor}
                   </Box>
                   <Typography variant="body1" gutterBottom>
                     {comment.comment}

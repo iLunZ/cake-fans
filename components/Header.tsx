@@ -1,15 +1,15 @@
-import { AppBar, Toolbar, Typography, Avatar, IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
-import AccountCircleIcon from '@mui/icons-material/AccountCircle'
-import { useLoginDialog } from '../contexts/LoginDialogContext'
+import { AppBar, Toolbar, Typography, Avatar, IconButton, Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useLoginDialog } from '../contexts/LoginDialogContext';
 import { useAuth } from '../contexts/AuthContext';
 import { useState } from 'react';
 
 
 
 export default function Header() {
-  const { openLoginDialog } = useLoginDialog()
+  const { openLoginDialog } = useLoginDialog();
   const { user, isLoading, setUser } = useAuth();
-  const [openLogout, setOpenLogout] = useState(false)
+  const [openLogout, setOpenLogout] = useState(false);
 
   const handleLogout = async () => {
     const response = await fetch('/api/logout', {
@@ -22,7 +22,7 @@ export default function Header() {
       setOpenLogout(false);
       window.location.reload();
     }
-  }
+  };
 
 
   return (
@@ -58,5 +58,5 @@ export default function Header() {
         </DialogActions>
       </Dialog>
     </AppBar>
-  )
+  );
 }

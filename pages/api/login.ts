@@ -1,9 +1,9 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
-import { compare } from 'bcryptjs'
-import * as yup from 'yup'
+import { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+import { compare } from 'bcryptjs';
+import * as yup from 'yup';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
 const loginSchema = yup.object({
   email: yup
@@ -14,35 +14,35 @@ const loginSchema = yup.object({
     .string()
     .required('Password is required')
     .min(6, 'Password must be at least 6 characters')
-})
+});
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' })
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 
   try {
     const validatedData = await loginSchema.validate(req.body, {
       abortEarly: false,
-    })
+    });
 
-    const { email, password } = validatedData
+    const { email, password } = validatedData;
 
     const user = await prisma.user.findUnique({
       where: { email }
-    })
+    });
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' })
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const passwordMatch = await compare(password, user.password)
+    const passwordMatch = await compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ message: 'Invalid email or password' })
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     res.setHeader('Set-Cookie', `token=${user.token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=2592000`);
@@ -54,14 +54,14 @@ export default async function handler(
         name: user.name,
         email: user.email
       }
-    })
+    });
   } catch (error) {
     if (error instanceof yup.ValidationError) {
       return res.status(400).json({
         message: 'Validation failed',
         errors: error.errors
-      })
+      });
     }
-    return res.status(500).json({ message: 'Internal server error' })
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }

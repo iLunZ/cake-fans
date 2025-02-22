@@ -95,7 +95,7 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
       }
       onClose(); // callback
     } catch (err) {
-      console.log('==> handleSubmit Error:', err)
+      console.log('==> handleSubmit Error:', err);
       if (err instanceof yup.ValidationError) {
         const newErrors = err.inner.reduce((acc, error) => ({
           ...acc,

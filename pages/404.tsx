@@ -1,8 +1,8 @@
-import { Container, Typography, Button, Box } from '@mui/material'
-import { useRouter } from 'next/router'
+import { Container, Typography, Button, Box } from '@mui/material';
+import { useRouter } from 'next/router';
 
 export default function Custom404() {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <Container>
@@ -31,5 +31,5 @@ export default function Custom404() {
         </Button>
       </Box>
     </Container>
-  )
+  );
 }

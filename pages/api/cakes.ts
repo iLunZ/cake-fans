@@ -1,13 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import { PrismaClient } from '@prisma/client'
-import * as yup from 'yup'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+import * as yup from 'yup';
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 // get
 const querySchema = yup.object({
   page: yup.number().positive().default(1),
   limit: yup.number().positive().max(100).default(10)
-})
+});
 // post:
 const cakeSchema = yup.object({
   name: yup.string().required('Cake name is required'),
@@ -89,9 +89,9 @@ export default async function handler(
       const { page, limit } = await querySchema.validate(req.query, { 
         abortEarly: false,
         stripUnknown: true
-      })
+      });
   
-      const skip = (page - 1) * limit
+      const skip = (page - 1) * limit;
   
       const cakes = await prisma.cake.findMany({
         skip,
@@ -107,9 +107,9 @@ export default async function handler(
             }
           }
         }
-      })
+      });
   
-      const total = await prisma.cake.count()
+      const total = await prisma.cake.count();
   
       return res.status(200).json({
         cakes,
@@ -119,14 +119,14 @@ export default async function handler(
           totalPages: Math.ceil(total / limit),
           totalItems: total
         }
-      })
+      });
     } catch (error) {
       if (error instanceof yup.ValidationError) {
-        return res.status(400).json({ errors: error.errors })
+        return res.status(400).json({ errors: error.errors });
       }
-      return res.status(500).json({ message: 'Internal server error' })
+      return res.status(500).json({ message: 'Internal server error' });
     }
   } else {
-    return res.status(405).json({ message: 'Method not allowed' })
+    return res.status(405).json({ message: 'Method not allowed' });
   }
 }

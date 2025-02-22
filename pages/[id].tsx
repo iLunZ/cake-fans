@@ -1,8 +1,8 @@
-import { GetServerSideProps } from 'next'
-import { Container, Typography, Box, Card, CardMedia, Divider, Stack, Breadcrumbs, Link, Fab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar, IconButton } from '@mui/material'
+import { GetServerSideProps } from 'next';
+import { Container, Typography, Box, Card, CardMedia, Divider, Stack, Breadcrumbs, Link, Fab, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Snackbar, IconButton } from '@mui/material';
 
-import StarIcon from '@mui/icons-material/Star'
-import NavigateNextIcon from '@mui/icons-material/NavigateNext'
+import StarIcon from '@mui/icons-material/Star';
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import CommentIcon from '@mui/icons-material/Comment';
 import * as yup from 'yup';
 import { useState } from 'react';
@@ -45,32 +45,32 @@ type Cake = {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params!
-  console.log('----id', id)
+  const { id } = context.params!;
+  console.log('----id', id);
   if(isNaN(Number(id))) {
     return {
       notFound: true
-    }
+    };
   }
   const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/cakes/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
     },
-  })
+  });
   if (response.status === 404) {
     return {
       notFound: true // This will trigger the 404 page
-    }
+    };
   }
-  const cake = await response.json()
+  const cake = await response.json();
 
   return {
     props: {
       cake
     }
-  }
-}
+  };
+};
 export default function CakeDetail({ cake }: { cake: Cake }) {
   const [open, setOpen] = useState(false);
   const [commentData, setCommentData] = useState({
@@ -306,5 +306,5 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
         </DialogActions>
       </Dialog>
     </>
-  )
+  );
 }

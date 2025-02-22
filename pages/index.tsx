@@ -60,7 +60,7 @@ export default function Home() {
   const [metadata, setMetadata] = useState<CakesResponse['metadata']>()
   const [query, setQuery] = useState<QueryParams>({
     page: 1,
-    limit: 10
+    limit: 5
   })
   const [open, setOpen] = useState(false)
   const [cakeData, setCakeData] = useState({
@@ -125,6 +125,12 @@ export default function Home() {
       setOpen(false)
       setToastMessage('Cake added successfully');
       setOpenToast(true);
+      setCakeData({
+        name: '',
+        imageUrl: '',
+        comment: '',
+        yumFactor: 1
+      })
       // Refresh cakes list
       await fetchCakes();
     } catch (err) {

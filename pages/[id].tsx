@@ -52,7 +52,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       notFound: true
     };
   }
-  const apiUrl = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_URL : `https://${process.env.VERCEL_URL}`;
+  const apiUrl = process.env.NODE_ENV === 'development' ? process.env.NEXT_PUBLIC_API_URL : 'https://cake-fans.vercel.app';
   const response = await fetch(`${apiUrl}/api/cakes/${id}`, {
     method: 'GET',
     headers: {

@@ -93,7 +93,7 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
           setOpenToast(true);
         }
       }
-      onClose(); // callback
+      onClose();
     } catch (err) {
       console.log('==> handleSubmit Error:', err);
       if (err instanceof yup.ValidationError) {

@@ -4,6 +4,8 @@ import * as yup from 'yup';
 import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/router';
 import { useAuth } from '../contexts/AuthContext';
+import { CakeSkeleton } from '../components/CakeSkeleton';
+
 
 
 
@@ -78,6 +80,7 @@ export default function Home() {
       page: query.page.toString(),
       limit: query.limit.toString()
     }).toString();
+    setLoading(true);
     const response = await fetch(`/api/cakes?${queryString}`, {
       method: 'GET',
       headers: {
@@ -147,94 +150,99 @@ export default function Home() {
       }
     }
   };
-  if (loading) {
-    return (
-      <Container>
-        <Typography>Loading...</Typography>
-      </Container>
-    );
-  }
   return (
     <>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Typography variant="h4" gutterBottom align="center" sx={{ mb: 4 }}>
           Our Delicious Cakes 🎂
         </Typography>
-        
-        {cakes.length === 0 ? (
-          <Box sx={{ 
-            textAlign: 'center', 
-            py: 8,
-            backgroundColor: '#f5f5f5',
-            borderRadius: 2
-          }}>
-            <Typography variant="h6" color="text.secondary">
-              No cakes found 🍰
-            </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
-              Be the first one to share a delicious cake!
-            </Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setOpen(true)}
-              sx={{ mt: 2 }}
-            >
-              Add New Cake
-            </Button>
-          </Box>
-        ):(
-          <Grid container spacing={3}>
-            {cakes.map((cake) => (
-              <Grid item key={cake.id} xs={12} sm={6} md={4}>
-                <Card 
-                  onClick={() => router.push(`/${cake.id}`)}
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
-                    '&:hover, &:active': {
-                      transform: 'scale(1.03)',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
-                      cursor: 'pointer'
-                    }
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    height="200"
-                    image={cake.imageUrl}
-                    alt={cake.name}
-                    sx={{ objectFit: 'cover' }}
-                  />
-                  <CardContent>
-                    <Typography variant="h6" align="center">
-                      {cake.name}
-                    </Typography>
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="body2">
-                        Posted by: {cake.user.name}
-                      </Typography>
-                      <Typography variant="body2">
-                        {new Date(cake.createdAt).toLocaleDateString()}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
+        { loading ?
+          (
+            <Grid container spacing={3}>
+              {[1, 2, 3, 4, 5, 6].map((item) => (
+                <Grid item key={item} xs={12} sm={6} md={4}>
+                  <CakeSkeleton />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (cakes.length === 0 ? (
+            <Box sx={{ 
+              textAlign: 'center', 
+              py: 8,
+              backgroundColor: '#f5f5f5',
+              borderRadius: 2
+            }}>
+              <Typography variant="h6" color="text.secondary">
+                No cakes found 🍰
+              </Typography>
+              <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
+                Be the first one to share a delicious cake!
+              </Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setOpen(true)}
+                sx={{ mt: 2 }}
+              >
+                Add New Cake
+              </Button>
+            </Box>
+          ):(
+            <>
+              <Grid container spacing={3}>
+                {cakes.map((cake) => (
+                  <Grid item key={cake.id} xs={12} sm={6} md={4}>
+                    <Card 
+                      onClick={() => router.push(`/${cake.id}`)}
+                      sx={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        transition: 'transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out',
+                        '&:hover, &:active': {
+                          transform: 'scale(1.03)',
+                          boxShadow: '0 8px 16px rgba(0,0,0,0.2)',
+                          cursor: 'pointer'
+                        }
+                      }}
+                    >
+                      <CardMedia
+                        component="img"
+                        height="200"
+                        image={cake.imageUrl}
+                        alt={cake.name}
+                        loading="lazy"
+                        sx={{ objectFit: 'cover' }}
+                      />
+                      <CardContent>
+                        <Typography variant="h6" align="center">
+                          {cake.name}
+                        </Typography>
+                        <Box sx={{ mt: 2 }}>
+                          <Typography variant="body2">
+                            Posted by: {cake.user.name}
+                          </Typography>
+                          <Typography variant="body2">
+                            {new Date(cake.createdAt).toLocaleDateString()}
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
               </Grid>
-            ))}
-          </Grid>
-        )}
-        {metadata && cakes.length > 0 && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-            <Pagination 
-              count={metadata.totalPages}
-              page={metadata.currentPage}
-              onChange={handlePageChange}
-              color="primary"
-            />
-          </Box>
+              {metadata && cakes.length > 0 && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                  <Pagination 
+                    count={metadata.totalPages}
+                    page={metadata.currentPage}
+                    onChange={handlePageChange}
+                    color="primary"
+                  />
+                </Box>
+              )}
+            </>
+          )
         )}
       </Container>
       <Fab 

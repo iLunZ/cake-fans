@@ -9,6 +9,7 @@ import { useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 
 
 const commentValidationSchema = yup.object({
@@ -143,6 +144,11 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
   };
   return (
     <>
+      <Head>
+        <title>{cake.name} - Cake Fans</title>
+        <meta name="description" content={`Come on! Look at this delicious ${cake.name} shared by ${cake.user.name}`} />
+        <meta property="og:image" content={cake.imageUrl} />
+      </Head>
       <Container maxWidth="md" sx={{ py: 4 }}>
         <Breadcrumbs 
           separator={<NavigateNextIcon fontSize="small" />} 

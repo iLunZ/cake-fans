@@ -5,7 +5,7 @@ import StarIcon from '@mui/icons-material/Star';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import CommentIcon from '@mui/icons-material/Comment';
 import * as yup from 'yup';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
@@ -87,6 +87,15 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
   const router = useRouter();
   const [openConfirm, setOpenConfirm] = useState(false);
 
+  useEffect(() => {
+    if (open) {
+      setCommentData({
+        comment: '',
+        yumFactor: 1
+      });
+      setErrors({});
+    }
+  }, [open]);
   const handleDelete = async () => {
     const response = await fetch(`/api/cakes/${cake.id}`, {
       method: 'DELETE',
@@ -264,7 +273,7 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
       >
         <CommentIcon />
       </Fab>
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog maxWidth="sm" fullWidth open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Add Comment</DialogTitle>
         <DialogContent>
           <TextField

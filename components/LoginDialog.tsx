@@ -1,6 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Stack, Typography, Link, Snackbar } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as yup from 'yup';
 
 const loginValidationSchema = yup.object({
@@ -42,6 +42,15 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
   const [openToast, setOpenToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const { setUser } = useAuth();
+
+  useEffect(() => {
+    if (open) {
+      setEmail('');
+      setPassword('');
+      setName('');
+      setErrors({});
+    }
+  }, [open]);
   
 
   const handleSubmit = async () => {
@@ -61,6 +70,7 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
         if (!response.ok) {
           setToastMessage(data.message);
           setOpenToast(true);
+          setUser(null);
           return;
         }
         onClose();
@@ -115,10 +125,15 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
 
   return (
     <>
-      <Dialog open={open} onClose={onClose}>
+      <Dialog
+        maxWidth="sm"
+        fullWidth
+        open={open} 
+        onClose={onClose}
+      >
         <DialogTitle>{isLogin ? 'Login' : 'Sign Up'}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1, minWidth: 300 }}>
+        <DialogContent sx={{ px: 2 }}>
+          <Stack spacing={2} sx={{ mt: 1, minWidth: '100%' }}>
             {!isLogin && (
               <TextField
                 label="Name"

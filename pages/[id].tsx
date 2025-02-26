@@ -183,7 +183,7 @@ export default function CakeDetail({ cake }: { cake: Cake }) {
             {cake.name}
           </Typography>
         </Breadcrumbs>
-        <Card>
+        <Card data-testid="cake-detail-page">
           <Box sx={{ position: 'relative' }}>
             <CardMedia
               component="img"

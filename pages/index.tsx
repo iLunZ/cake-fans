@@ -189,10 +189,11 @@ export default function Home() {
             </Box>
           ):(
             <>
-              <Grid container spacing={3}>
+              <Grid container spacing={3} data-testid="cake-list">
                 {cakes.map((cake) => (
                   <Grid item key={cake.id} xs={12} sm={6} md={4}>
-                    <Card 
+                    <Card
+                      data-testid="cake-card"
                       onClick={() => router.push(`/${cake.id}`)}
                       sx={{
                         height: '100%',
@@ -245,7 +246,7 @@ export default function Home() {
           )
         )}
       </Container>
-      <Fab 
+      <Fab
         color="primary" 
         aria-label="add" 
         onClick={() => {handlePost();}}

@@ -126,6 +126,7 @@ export default function LoginDialog({ open, onClose }: LoginDialogProps) {
   return (
     <>
       <Dialog
+        data-testid="login-dialog"
         maxWidth="sm"
         fullWidth
         open={open} 

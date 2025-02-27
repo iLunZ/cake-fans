@@ -37,7 +37,8 @@ export default function Header() {
             {user.name.charAt(0).toUpperCase()}
           </Avatar>
         ) : (
-          <IconButton 
+          <IconButton
+            data-testid="header-login-button"
             color="inherit" 
             onClick={openLoginDialog}
           >

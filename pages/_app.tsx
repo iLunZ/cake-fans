@@ -7,7 +7,9 @@ import { createTheme } from '@mui/material/styles';
 import Header from '../components/Header';
 import { LoginDialogProvider } from '../contexts/LoginDialogContext';
 import { AuthProvider } from '../contexts/AuthContext';
-
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import {LoadingOverlay} from '../components/LoadingLay';
 
 const theme = createTheme({
   palette: {
@@ -21,6 +23,25 @@ const theme = createTheme({
 });
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+
+  useEffect(() => {
+    const handleStart = () => setIsLoading(true);
+    const handleComplete = () => setIsLoading(false);
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -36,6 +57,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <AuthProvider>
           <LoginDialogProvider>
             <CssBaseline />
+            {isLoading && <LoadingOverlay />}
             <Header />
             <Component {...pageProps} />
           </LoginDialogProvider>

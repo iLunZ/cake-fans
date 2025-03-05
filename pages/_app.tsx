@@ -14,10 +14,18 @@ import {LoadingOverlay} from '../components/LoadingLay';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#FF85A2', // Sweet pink like strawberry frosting
+      light: '#FFA5BD',
+      dark: '#E66B87',
     },
     secondary: {
-      main: '#81c784',
+      main: '#FFB74D', // Warm orange like caramel
+      light: '#FFD180',
+      dark: '#FF9D1B',
+    },
+    background: {
+      default: '#FFF9F9', // Soft cream background
+      paper: '#FFFFFF',
     },
   },
 });

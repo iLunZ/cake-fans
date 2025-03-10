@@ -10,6 +10,7 @@ import { AuthProvider } from '../contexts/AuthContext';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import {LoadingOverlay} from '../components/LoadingLay';
+import { Analytics } from "@vercel/analytics/react";
 
 const theme = createTheme({
   palette: {
@@ -68,6 +69,7 @@ export default function App({ Component, pageProps }: AppProps) {
             {isLoading && <LoadingOverlay />}
             <Header />
             <Component {...pageProps} />
+            <Analytics />
           </LoginDialogProvider>
         </AuthProvider>
       </ThemeProvider>
